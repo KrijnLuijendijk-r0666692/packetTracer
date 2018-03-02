@@ -1,0 +1,31 @@
+###############################################################################
+			6.4.3.3 PT exercise oplossing
+###############################################################################
+
+Part 1:
+
+Step 1:
+	a) sh int
+	b) sh int S 0/0/0
+	c) kijken in PT..
+	d) sh int g 0/0/0
+		1. interface is down... no ip address
+		2. 000d.bd6c.7d01
+		3. 1 000 000 Kbit
+
+
+Step 2:
+
+	a) sh ip int br
+	b) allen voor R1:
+		1. 2
+		2. 6
+		3. nee, er zijn 2 GigabitEthernet interfaces en 4 FastEthernet interfaces.
+		   g interfaces hebben 1Mbit bandbreedte
+		   f interfaces hebben 100 000 Kbit bandbreedte
+Step 3:
+	
+	a) sh ip ro
+	b) R1:
+		1. maar 1: 209.165.200.224/30 is directly connected, Serial0/0/0
+	

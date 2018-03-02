@@ -1,0 +1,14 @@
+############################################################################################
+				5.1.1.6 Lab
+###########################################################################################
+
+Part 1:
+	step 1: b) de switch heeft nog geen ip adres en is dus nog niet te bereiken via het netwerk.
+
+	step 2: b) 24 FastEthernet poorten, 2 GigabitEthernet poorten, vty 0 4 en vty 5 15
+		c) there is no saved startuo config
+		d) no, zie mac adres, no
+		e) Vlan1 is administratively down, line protocol is down
+		   Internet protocol processing disabled
+
+verder ist gewoon labo volgen. Op een gegeven moment moet ge de vlan1 interface wel aanzetten door: int vlan1, no shut

@@ -1,0 +1,21 @@
+###########################################################################
+				Oef. 3.2.1.8
+###########################################################################
+
+handig: sh ip protocols
+
+Part 1:
+
+	Step 1:
+		a) ip route 0.0.0.0 0.0.0.0 s 0/0/1
+		b) router rip
+		c) version 2
+		d) network 192.168.1.0, network 192.168.2.0
+		e) passive-interface g 0/0
+		f) dafault-info originate
+		g) exit, exit, copy running-config startup-config
+
+	Step 2:
+		a) router rip
+		b) version 2
+		c) .....

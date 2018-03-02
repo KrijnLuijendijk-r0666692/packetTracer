@@ -1,0 +1,52 @@
+##############################################################################################
+				OSPF lab1
+#########################################################################################
+
+router configureren:
+
+	in CLI:
+		en
+		conf t
+		int g 0/0 //interface selecteren
+		ip address 192.168.1.1 255.255.255.0 
+		no shutdown //interface aanzetten
+		
+		int S 0/0/0
+		ip address 192.168.12.1 255.255.255.252
+		no shutdown
+
+		int S 0/0/1
+		ip address 192.168.13.1 255.255.255.252
+		no shutdown
+
+		//passwords instellen:
+		en
+		conf t
+		enable password cisco
+		line con 0
+		password cisco
+		login
+		exit
+		service password-encryption
+		exit
+		wr mem
+
+pc configureren:
+
+	in config venster: IP-adres instellen bij interface en DEFAULT GATEWAY (ip adres router)!!
+
+	OSPF:
+
+		conf t
+		router ospf 1 //enable OSPF with process id 1
+		router-id 1.1.1.1 //router id voor ospf instellen
+		network 192.168.1.1 0.0.0.0 area 0 //netw (ip-adres router) (wildcard-mask = 0.0.0.0 als je routers eigen ip gebruikt) area (area nr)
+		network 192.168.12.1 0.0.0.0 area 0
+		network 192.168.13.1 0.0.0.0 area 0
+
+		//check ospf settings:
+
+		show ip ospf neighbor //list ospf neighbors
+		show ip route // laat routeringstabel zien (OSPF gevonden routes verschijnen met 'O')
+		show ip protocols //verify configuration
+		show ip ospf //examine ospf process id en router id
