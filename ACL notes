@@ -24,3 +24,7 @@ access-list op vty:
 lin vty 0-15
 access-class <nummer> in
 
+access-list entry verwijderen:
+
+ip access-list standard 1
+no <nummer>

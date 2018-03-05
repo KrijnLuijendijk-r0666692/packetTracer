@@ -7,12 +7,13 @@ handig: sh ip protocols
 Part 1:
 
 	Step 1:
-		a) ip route 0.0.0.0 0.0.0.0 s 0/0/1
-		b) router rip
-		c) version 2
-		d) network 192.168.1.0, network 192.168.2.0
-		e) passive-interface g 0/0
-		f) dafault-info originate
+		a) ip route 0.0.0.0 0.0.0.0 s 0/0/1	 //Default gateway instellen
+		a2) no auto-summary			//Zorgt ervoor dat de juiste netwerken worden doorgegeven
+		b) router rip				 //open rip configuratie
+		c) version 2				 //rip versie 2 gebruiken - belangrijk!
+		d) network 192.168.1.0, network 192.168.2.0 //vertel RIP welke netwerken verbonden zijn met deze router
+		e) passive-interface g 0/0		 //verkondig deze netwerken niet op interface g0/0
+		f) dafault-info originate		//Verkondig de default gateway
 		g) exit, exit, copy running-config startup-config
 
 	Step 2:
