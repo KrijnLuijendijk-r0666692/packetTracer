@@ -1,0 +1,26 @@
+#######################################################################################
+				ACL Notes
+######################################################################################
+
+OEF: 7.2.2.6, 7.2.3.4, 7.2.1.7, 7.4.1.2
+
+nieuwe access-list:
+
+	en
+	conf t
+	access-list <nummer> <deny|permit|remark> <ip-adres> <wildcard mask>
+
+toevoegen aan interface:
+
+	int g 0/0
+	ip access-group <nummer> <in|out>
+
+onderaan access-list staat altijd 'deny any'
+
+
+
+access-list op vty:
+
+lin vty 0-15
+access-class <nummer> in
+
