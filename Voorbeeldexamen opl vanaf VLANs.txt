@@ -1,0 +1,201 @@
+VLANS’s en VLAN routering
+◦ Configureer S1
+▪ Maak de nodige VLANs aan
+	in (config):
+	vlan 21
+		name Accounting
+	vlan 23
+		name Engineering
+	vlan 99
+		name Management
+		exit
+
+▪ Ken een IPv4 adres to aan het Management VLAN 
+
+	in (config):
+
+	interface vlan 99
+		ip add 192.168.99.2 255.255.255.0
+		exit
+
+▪ Ken de gefault gateway toe
+
+	in(config)
+	ip default-gateway 192.168.99.1
+	exit
+
+▪ Zet F0/3 en F0/5 in Trunk mode (native VLAN 1)
+
+	in(config)
+	interface f 0/3
+	switchport mode trunk //set to trunk mode
+	switchport trunk native vlan 1 //set native vlan
+	switchport trunk allowed vlan 21,23,99 //set allowed vlans over trunk
+
+▪ Zet alle andere poorten in access mode
+	
+	op andere poorten (interfaces):
+
+	switchport mode access
+
+▪ Voeg F0/6 toe in VLAN 21
+
+	in (config):
+
+	int f 0/6
+	switchport access vlan 21
+	exit
+
+▪ Zet alle ongebruikte poorten af (shutdown)
+
+	in (config):
+
+	interface range f 0/7-24
+	shutdown
+	int f 0/4
+	shutdown
+	int range f 0/1-2
+	shutdown
+
+◦ Configureer S3
+▪ Maak de nodige VLANs aan
+	zie S1
+▪ Ken een IPv4 adres to aan het Management VLAN ▪ Ken de gefault gateway toe
+	zie S1
+▪ Zet F0/3 in Trunk mode (native VLAN 1)
+	zie S1
+▪ Zet alle andere poorten in access mode
+▪ Zet poort F0/18 in VLAN 23
+	int f 0/18
+	swi ac vl 23
+▪ Zet alle ongebruikte poorten af (shutdown)
+
+◦ Configureer R1 en geef de subinterfaces het eerste IP adres in het netwerk. 
+▪ Configureer 802.1Q subinterface .21 aan op G0/1
+	interface g 0/1.21
+		encapsulation dot1Q 21 //zeg dat de interface aan vlan 21 behoort
+		ip address 192.168.21.1 255.255.255.0
+
+▪ Configureer 802.1Q subinterface .23 aan op G0/1
+	interface g 0/1.23
+		encapsulation dot1Q 23
+		ip address 192.168.23.1 255.255.255.0
+
+▪ Configureer 802.1Q subinterface .99 aan op G0/1
+	interface g 0/1.99
+		encapsulation dot1Q 99
+		ip address 192.168.99.1 255.255.255.0
+
+▪ Activeer G0/1 ;-)
+	int g 0/1
+	no shut
+
+◦ Volgende devices moeten met elkaar kunnen ping’en:
+▪ S1 => R1, VLAN 99 adres 
+▪ S3 => R1, VLAN 99 adres 
+▪ S1 => R1, VLAN 21 adres 
+▪ S3 => R1, VLAN 23 adres
+• Configureer RIPv2
+
+▪ Configureer RIPv2 op R1
+	in (config)
+		router rip
+			version 2
+			no auto-summary
+			network 192.168.99.0
+			network 192.168.21.0
+			network 192.168.23.0
+			network 172.16.1.0
+			passive-interface g 0/1
+
+• Adverteer alle geconnecteerde netwerken
+• Zet alle LAN interfaces (G0/1) op passive
+▪ Configureer RIPv2 op R2
+	in (config)
+		router rip
+			version 2
+			no auto-summary
+			network 172.16.1.0
+			network 172.16.2.0
+			network 209.165.200.232
+			passive-interface g0/0
+			passive-interface loopback 0
+
+• Adverteer alle geconnecteerde netwerken
+• Zet alle LAN/Loopback (G0/0 en Lo0) interfaces op passive
+▪ Configureer RIPv3 op R3
+	in(config)
+		router rip
+			version 2
+			no auto-summary
+			network 172.16.2.0
+			network 192.168.4.0
+			network 192.168.5.0
+			network 192.168.6.0
+
+			passive-interface l4
+			passive l5
+			pas l6
+			pas l7
+• Adverteer alle geconnecteerde netwerken
+• Zet alle Loopback interfaces op passive
+
+• Implementeer DHCP en NATvoor IPv4 op R2
+
+	in(config)
+
+		ip nat pool NAT-POOL1 209.165.200.234 209.165.200.237
+		access-list 1 permit 192.168.0.0 0.0.255.255
+		ip nat inside source list 1 pool NAT-POOL1
+
+		int g 0/0
+			ip nat outside
+		int s 0/0/0
+			ip nat inside
+		int s 0/0/1
+			ip nat inside
+
+
+◦ Reserveer de eerste 20 IP-adressen in VLAN 21 voor statische configuratie.
+◦ Reserveer de eerste 20 IP-adressen in VLAN 31 voor statische configuratie.
+◦ Maak een DHCP pool aan voor VLAN 21
+
+	in (config)
+		ip dhcp excluded-address 192.168.21.1 192.168.21.20
+		ip dhcp pool ACCT
+		network 192.168.21.0 255.255.255.0
+		dns-server 10.10.10.10
+		domain-name ccna-sa.com //werkt niet in mijn packet trace??
+		default-router 192.168.21.1
+
+▪ naamACCT
+▪ DNS server 10.10.10.10
+▪ Domain naam: ccna-sa.com
+
+▪ Geef de juiste default gateway mee. ◦ Maak een DHCP pool aan voor VLAN 23
+
+	in (config)
+		ip dhcp excluded-address 192.168.23.1 192.168.23.20
+		ip dhcp pool ACCT
+		network 192.168.23.0 255.255.255.0
+		dns-server 10.10.10.10
+		domain-name ccna-sa.com //werkt niet in mijn packet trace??
+		default-router 192.168.23.1
+
+
+Om DHCP te laten werken, moet je eerst nog R1 instellen als een dhcp relay. Een router verspreid namelijk geen broadcast pakketten.
+Je moet dit op de sub-interfacs doen ipv op de main interface (in dit geval)
+om dit te doen op R1:
+
+	in (config)
+
+	int g 0/1.21
+		ip helper-address 172.16.1.2 (IP ADRES VAN DE DHCP SERVER)
+
+	int g0/1.23
+		ip helper-address 172.16.1.2
+
+▪ naam ENGNR
+▪ DNS server 10.10.10.10
+▪ Domain naam: ccna-sa.com
+▪ Geef de juiste default gateway mee.
